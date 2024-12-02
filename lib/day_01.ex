@@ -1,5 +1,4 @@
 import Day01Input
-import Function, only: [identity: 1]
 
 defmodule Day01 do
   def both_lists(input) do
@@ -18,17 +17,18 @@ defmodule Day01 do
     result =
       both_lists(input())
       |> Enum.map(&Enum.sort(&1))
-      |> Enum.zip()
-      |> Enum.map(fn {l, r} -> abs(l - r) end)
-      |> Enum.sum()
+      |> Enum.zip_reduce(0, fn [l, r], acc -> acc + abs(l - r) end)
 
     IO.inspect(result)
   end
 
   def part2() do
     [l, r] = both_lists(input())
-    o = Enum.group_by(r, &identity/1) |> Map.new(fn {k, v} -> {k, Enum.count(v)} end)
-    result = Enum.reduce(l, 0, fn elem, acc -> acc + Map.get(o, elem, 0) * elem end)
+    freqs = Enum.frequencies(r)
+
+    result =
+      Enum.reduce(l, 0, fn elem, acc -> acc + Map.get(freqs, elem, 0) * elem end)
+
     IO.inspect(result)
   end
 end
