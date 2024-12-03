@@ -29,13 +29,10 @@ defmodule Day02 do
     dir != :none and safe?
   end
 
-  def recursive_is_safe?(level, idx) do
-    if idx == Enum.count(level) do
-      false
-    else
-      is_safe?(List.delete_at(level, idx)) or recursive_is_safe?(level, idx + 1)
-    end
-  end
+  def recursive_is_safe?(_, idx, len) when idx == len, do: false
+
+  def recursive_is_safe?(level, idx, len),
+    do: is_safe?(List.delete_at(level, idx)) or recursive_is_safe?(level, idx + 1, len)
 
   def part1() do
     answer =
@@ -46,18 +43,18 @@ defmodule Day02 do
         acc -> acc + 1
       end
 
-    IO.inspect(answer)
+    IO.inspect(answer, label: "p1")
   end
 
   def part2() do
     answer =
       for ln <- lines(input()),
           level = integer_list_from_str(ln),
-          recursive_is_safe?(level, 0),
+          recursive_is_safe?(level, 0, length(level)),
           reduce: 0 do
         acc -> acc + 1
       end
 
-    IO.inspect(answer)
+    IO.inspect(answer, label: "p2")
   end
 end
