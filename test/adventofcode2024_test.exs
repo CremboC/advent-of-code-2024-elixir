@@ -20,4 +20,9 @@ defmodule Adventofcode2024Test do
     assert Day04.part1() == 2603
     assert Day04.part2() == 1965
   end
+
+  test "day05" do
+    assert Day05.part1() > 0
+    assert Day05.part2() > 0
+  end
 end

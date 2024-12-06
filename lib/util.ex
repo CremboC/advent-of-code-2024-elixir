@@ -1,6 +1,11 @@
 defmodule Util do
+  def clean_list(list), do: Enum.filter(list, &(&1 != ""))
+
   def lines(string),
     do: String.split(string, "\n") |> Enum.filter(&(&1 != ""))
+
+  def lines_raw(string),
+    do: String.split(string, "\n")
 
   def integer_list_from_str(string, splitter \\ " "),
     do: String.split(string, splitter) |> Enum.map(&(Integer.parse(&1) |> elem(0)))
