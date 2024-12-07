@@ -48,11 +48,16 @@ defmodule Day07 do
           do: {int!(target), integer_list_from_str(num_string)}
 
     answer =
-      for {target, nums} <- inp,
-          Enum.any?(gen(nums, options), &(apply(&1) == target)),
-          reduce: 0 do
-        acc -> acc + target
-      end
+      inp
+      |> Task.async_stream(
+        fn {target, nums} ->
+          if(Enum.any?(gen(nums, options), &(apply(&1) == target)), do: target, else: 0)
+        end,
+        ordered: false
+      )
+      |> Stream.map(fn {:ok, res} -> res end)
+      |> Enum.to_list()
+      |> Enum.sum()
 
     IO.inspect(answer, label: "p2")
   end
