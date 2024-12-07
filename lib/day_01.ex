@@ -4,7 +4,7 @@ import Util
 defmodule Day01 do
   def both_lists(input) do
     for ln <- lines(input),
-        [l, r] = integer_list_from_str(ln, "   "),
+        [l, r] = integer_list_from_str(ln),
         reduce: [[], []] do
       [accl, accr] -> [[l | accl], [r | accr]]
     end
