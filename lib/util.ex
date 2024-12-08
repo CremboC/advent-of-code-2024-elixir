@@ -15,17 +15,15 @@ defmodule Util do
 
   def int!(string), do: Integer.parse(string) |> elem(0)
 
-  def array_2d(string),
-    do:
-      lines(string)
-      |> Enum.with_index()
-      |> Enum.reduce(%{}, fn {ln, y}, acc ->
-        %{
-          y =>
-            String.graphemes(ln)
-            |> Enum.with_index()
-            |> Enum.reduce(%{}, fn {c, x}, acc -> Map.merge(acc, %{x => c}) end)
-        }
-        |> Map.merge(acc)
-      end)
+  def pairs(lst), do: for(l <- lst, r <- lst, l != r, do: {l, r})
+
+  def uniq_pairs(lst), do: uniq_pairs([], lst)
+  def uniq_pairs(acc, []), do: acc
+
+  def uniq_pairs(acc, [head | tail]) do
+    for l <- tail, reduce: acc do
+      acc -> [{head, l} | acc]
+    end
+    |> uniq_pairs(tail)
+  end
 end

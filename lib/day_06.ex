@@ -45,49 +45,20 @@ defmodule Day06 do
     end
   end
 
-  def navigate_p2(dir, loc, inp, obstacles_placed) do
+  def navigate_p2(dir, {y, x} = loc, inp, visited) do
+    visited = MapSet.put(visited, {dir, y, x})
     {ny, nx} = nloc = next_loc(dir, loc)
     ndir = @next[dir]
 
     case inp[ny][nx] do
-      nil ->
-        obstacles_placed
-
-      "#" ->
-        navigate_p2(ndir, next_loc(ndir, loc), inp, obstacles_placed)
-
-      _ ->
-        {say, sax} =
-          next_loc_until(inp, ndir, loc, fn
-            "#" -> :halt
-            nil -> :halt
-            _ -> :cont
-          end)
-
-        obstacles_placed =
-          if inp[say][sax] != nil and
-               not MapSet.member?(obstacles_placed, inp[ny][nx]) and
-               has_loop?(
-                 # new direction if we placed an obstacle infront of us
-                 ndir,
-                 # next place if we turned now
-                 next_loc(ndir, loc),
-                 # need to place an obstacle in the next position
-                 put_in(inp[ny][nx], "#"),
-                 # next_loc(ndir, loc),
-                 %{}
-               ) do
-            MapSet.put(obstacles_placed, nloc)
-          else
-            obstacles_placed
-          end
-
-        navigate_p2(dir, nloc, inp, obstacles_placed)
+      nil -> visited
+      "#" -> navigate_p2(ndir, next_loc(ndir, loc), inp, visited)
+      _ -> navigate_p2(dir, nloc, inp, visited)
     end
   end
 
   def part1 do
-    inp = array_2d(input())
+    inp = Matrix.from_string(input())
     [{ys, xs} = loc] = get_locs_by(inp, &(&1 == "^"))
 
     inp = put_in(inp[ys][xs], ".")
@@ -96,13 +67,65 @@ defmodule Day06 do
     IO.inspect(answer, label: "p1")
   end
 
+  def placed_obstacles([], _, acc), do: acc
+
+  def placed_obstacles([{dir, y, x} | tail], inp, acc) do
+    # IO.inspect({y, x}, label: "checking")
+    next_dir = @next[dir]
+
+    attempt? =
+      next_loc_until(inp, next_dir, {y, x}, fn
+        "#" -> :halt
+        nil -> :halt
+        _ -> :cont
+      end)
+      |> Loc.valid?(inp)
+
+    {ahead_y, ahead_x} = ahead_loc = next_loc(dir, {y, x}) |> IO.inspect()
+
+    next_acc =
+      if attempt? and
+           Loc.valid?(ahead_loc, inp) and
+           has_loop?(
+             next_dir,
+             next_loc(next_dir, {y, x}),
+             put_in(inp[ahead_y][ahead_x], "#"),
+             %{}
+           ) do
+        MapSet.put(acc, {y, x})
+      else
+        acc
+      end
+
+    placed_obstacles(tail, inp, next_acc)
+  end
+
   def part2() do
-    inp = array_2d(input())
+    inp = Matrix.from_string(input_example())
     [{ys, xs} = loc] = get_locs_by(inp, &(&1 == "^"))
 
     inp = put_in(inp[ys][xs], ".")
-    answer = navigate_p2(:north, loc, inp, MapSet.new())
+    visited = navigate_p2(:north, loc, inp, MapSet.new())
 
-    IO.inspect(answer |> MapSet.size(), label: "p2")
+    answer =
+      placed_obstacles(MapSet.to_list(visited), inp, MapSet.new())
+      |> MapSet.delete({ys, xs})
+
+    # |> IO.inspect()
+    # |> MapSet.size()
+
+    for {y, x} <- answer do
+      print(put_in(inp[y][x], "O"))
+      IO.puts("")
+    end
+
+    answer = MapSet.size(answer)
+
+    # potential_loc? = fn -> end
+
+    # for potential <- visited,
+
+    # answer = MapSet.new()
+    IO.inspect(answer, label: "p2")
   end
 end

@@ -48,7 +48,7 @@ defmodule Day04 do
   end
 
   def part1() do
-    inp = array_2d(input())
+    inp = Matrix.from_string(input())
     max_y = Map.keys(inp) |> Enum.max()
     max_x = Map.keys(inp[0]) |> Enum.max()
 
@@ -64,7 +64,7 @@ defmodule Day04 do
   end
 
   def part2() do
-    inp = array_2d(input())
+    inp = Matrix.from_string(input())
     max_y = Map.keys(inp) |> Enum.max()
     max_x = Map.keys(inp[0]) |> Enum.max()
 
