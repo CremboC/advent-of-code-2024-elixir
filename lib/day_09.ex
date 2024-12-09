@@ -120,36 +120,30 @@ defmodule Day09 do
     end
   end
 
-  # for each data block
-  # go from the left side, attempting to find a free space where idx(free) < idx(data_block)
-  #
-  def solve_p2_2(disk), do: solve_p2_2(disk, Vec.size(disk) - 1)
+  def solve_p2(disk), do: solve_p2(disk, Vec.size(disk) - 1)
 
-  def solve_p2_2(disk, 0), do: disk
+  def solve_p2(disk, 0), do: disk
 
-  def solve_p2_2(disk, p) do
-    # print_expand(disk |> Vec.to_list() |> Deq.new())
-    # IO.inspect(p, label: "pointer")
-
+  def solve_p2(disk, p) do
     case Vec.at!(disk, p) do
       %Free{} ->
-        solve_p2_2(disk, p - 1)
+        solve_p2(disk, p - 1)
 
       %Data{moved: true} ->
-        solve_p2_2(disk, p - 1)
+        solve_p2(disk, p - 1)
 
-      %Data{n: dsize, moved: false} = data ->
+      %Data{n: dsize, id: id, moved: false} = data ->
         fidx =
           0..(p - 1)
           |> Enum.find_index(fn i ->
-            case Vec.at!(disk, i) do
+            case Vec.at(disk, i) do
               %Free{n: fsize} when dsize <= fsize -> true
               _ -> false
             end
           end)
 
         if fidx == nil do
-          solve_p2_2(disk, p - 1)
+          solve_p2(disk, p - 1)
         else
           %Free{n: fsize} = Vec.at!(disk, fidx)
           diff = fsize - dsize
@@ -161,7 +155,7 @@ defmodule Day09 do
               # remove data from original location
               # and remove free space from current location
               disk = Vec.replace_at!(disk, p, %Free{n: dsize}) |> Vec.replace_at!(fidx, data)
-              solve_p2_2(disk, p - 1)
+              solve_p2(disk, p - 1)
 
             # we have extra free space
             diff > 0 ->
@@ -169,71 +163,11 @@ defmodule Day09 do
               {left, right} = Vec.split(disk, fidx + 1)
 
               disk = left +++ vec([%Free{n: diff}]) +++ right
-              solve_p2_2(disk, p - 1)
+              solve_p2(disk, p)
           end
         end
     end
   end
-
-  # def solve_p2(disk) do
-  #   p1 =
-  #     Enum.find_index(disk, fn
-  #       %Free{} -> true
-  #       _ -> false
-  #     end)
-
-  #   p2 = Vec.size(disk) - 1
-
-  #   solve_p2(disk, p1, p2)
-  # end
-
-  # def solve_p2(disk, p1, p2) when p1 == p2, do: disk
-
-  # def solve_p2(disk, p1, p2) do
-  #   # print_expand(disk |> Vec.to_list() |> Deq.new())
-
-  #   case Vec.at!(disk, p1) do
-  #     %Data{} ->
-  #       solve_p2(disk, p1 + 1, p2)
-
-  #     %Free{n: free} ->
-  #       {idx, data} =
-  #         p2..p1//-1
-  #         |> Enum.map(fn i -> {i, Vec.at!(disk, i)} end)
-  #         |> Enum.find({0, nil}, fn
-  #           {_, %Data{n: size, moved: false}} when size <= free ->
-  #             true
-
-  #           _ ->
-  #             false
-  #         end)
-
-  #       if data == nil do
-  #         solve_p2(disk, p1 + 1, p2)
-  #       else
-  #         diff = free - data.n
-  #         data = %{data | moved: true}
-
-  #         cond do
-  #           # fits perfectly
-  #           diff == 0 ->
-  #             # remove data from original location
-  #             # and remove free space from current location
-  #             disk = Vec.replace_at!(disk, idx, %Free{n: data.n}) |> Vec.replace_at!(p1, data)
-  #             solve_p2(disk, p1 + 1, p2)
-
-  #           # we have extra free space
-  #           diff > 0 ->
-  #             disk = Vec.replace_at!(disk, idx, %Free{n: data.n}) |> Vec.replace_at!(p1, data)
-  #             {left, right} = Vec.split(disk, p1 + 1)
-
-  #             disk = left +++ vec([%Free{n: diff}]) +++ right
-
-  #             solve_p2(disk, p1 + 1, p2)
-  #         end
-  #       end
-  #   end
-  # end
 
   def parse(input) do
     Util.string_to_int_list!(input)
@@ -259,26 +193,8 @@ defmodule Day09 do
     input
     |> parse()
     |> Vec.new()
-    # |> print_expand()
-    # |> solve_p2() # 6422354846267
-    # 6457255431661, 6457255431661, 6457255431661, 6457258710389
-    |> solve_p2_2()
-    # |> IO.inspect()
-    # |> Vec.to_list()
-    # |> Deq.new()
-    # |> IO.inspect()
-    # |> print_expand()
+    |> solve_p2()
     |> checksum_vec()
     |> IO.inspect(label: "p2: checksum")
-
-    insert_between(vec([0, 1, 2]), 2, "hi") |> IO.inspect()
-
-    # checksum_vec(vec([%Data{n: 2, id: 0}, %Data{n: 2, id: 9}, %Data{n: 1, id: 8}]))
-    # |> IO.inspect()
-  end
-
-  def insert_between(vec, idx, item) do
-    {l, r} = Vec.split(vec, idx)
-    l +++ vec([item]) +++ r
   end
 end
