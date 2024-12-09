@@ -1,5 +1,4 @@
 import Day06Input
-import Util
 import Matrix
 
 defmodule Day06 do

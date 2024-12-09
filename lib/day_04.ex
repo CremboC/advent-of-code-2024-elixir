@@ -1,5 +1,4 @@
 import Day04Input
-import Util
 
 defmodule Day04 do
   def check(inp, {y, x}, idx, str) do

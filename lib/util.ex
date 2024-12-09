@@ -13,6 +13,9 @@ defmodule Util do
   def integer_list_from_str(string, splitter),
     do: String.split(string, splitter) |> Enum.map(&(Integer.parse(&1) |> elem(0)))
 
+  def string_to_int_list!(lst),
+    do: String.graphemes(lst) |> Enum.map(&(Integer.parse(&1) |> elem(0)))
+
   def int!(string), do: Integer.parse(string) |> elem(0)
 
   def pairs(lst), do: for(l <- lst, r <- lst, l != r, do: {l, r})
