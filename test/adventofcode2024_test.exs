@@ -42,7 +42,7 @@ defmodule Adventofcode2024Test do
   end
 
   test "day09" do
-    # Day09.part1(Day09Input.input_example_1())
+    Day09.part1(Day09Input.input())
     Day09.part2(Day09Input.input())
   end
 end

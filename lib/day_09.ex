@@ -135,7 +135,10 @@ defmodule Day09 do
       %Free{} ->
         solve_p2_2(disk, p - 1)
 
-      %Data{n: dsize} = data ->
+      %Data{moved: true} ->
+        solve_p2_2(disk, p - 1)
+
+      %Data{n: dsize, moved: false} = data ->
         fidx =
           0..(p - 1)
           |> Enum.find_index(fn i ->
@@ -150,6 +153,7 @@ defmodule Day09 do
         else
           %Free{n: fsize} = Vec.at!(disk, fidx)
           diff = fsize - dsize
+          data = %{data | moved: true}
 
           cond do
             # fits perfectly
@@ -165,7 +169,6 @@ defmodule Day09 do
               {left, right} = Vec.split(disk, fidx + 1)
 
               disk = left +++ vec([%Free{n: diff}]) +++ right
-
               solve_p2_2(disk, p - 1)
           end
         end
@@ -258,7 +261,8 @@ defmodule Day09 do
     |> Vec.new()
     # |> print_expand()
     # |> solve_p2() # 6422354846267
-    # |> solve_p2_2() # 6457255431661
+    # 6457255431661, 6457255431661, 6457255431661, 6457258710389
+    |> solve_p2_2()
     # |> IO.inspect()
     # |> Vec.to_list()
     # |> Deq.new()
@@ -267,7 +271,14 @@ defmodule Day09 do
     |> checksum_vec()
     |> IO.inspect(label: "p2: checksum")
 
+    insert_between(vec([0, 1, 2]), 2, "hi") |> IO.inspect()
+
     # checksum_vec(vec([%Data{n: 2, id: 0}, %Data{n: 2, id: 9}, %Data{n: 1, id: 8}]))
     # |> IO.inspect()
+  end
+
+  def insert_between(vec, idx, item) do
+    {l, r} = Vec.split(vec, idx)
+    l +++ vec([item]) +++ r
   end
 end
