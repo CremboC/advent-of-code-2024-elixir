@@ -45,4 +45,9 @@ defmodule Adventofcode2024Test do
     assert Day09.part1(Day09Input.input()) == 6_395_800_119_709
     assert Day09.part2(Day09Input.input()) == 6_418_529_470_362
   end
+
+  test "day10" do
+    assert Day10.part1(Day10Input.input()) == 489
+    assert Day10.part2(Day10Input.input()) == 1086
+  end
 end

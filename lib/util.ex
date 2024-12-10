@@ -17,6 +17,7 @@ defmodule Util do
     do: String.graphemes(lst) |> Enum.map(&(Integer.parse(&1) |> elem(0)))
 
   def int!(string), do: Integer.parse(string) |> elem(0)
+  def int?(string), do: Integer.parse(string) != :error
 
   def pairs(lst), do: for(l <- lst, r <- lst, l != r, do: {l, r})
 

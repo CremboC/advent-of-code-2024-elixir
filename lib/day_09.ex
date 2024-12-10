@@ -132,7 +132,7 @@ defmodule Day09 do
       %Data{moved: true} ->
         solve_p2(disk, p - 1)
 
-      %Data{n: dsize, id: id, moved: false} = data ->
+      %Data{n: dsize, moved: false} = data ->
         fidx =
           0..(p - 1)
           |> Enum.find_index(fn i ->

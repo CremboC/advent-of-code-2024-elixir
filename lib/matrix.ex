@@ -1,5 +1,5 @@
 defmodule Matrix do
-  def from_string(string),
+  def from_string(string, mapper \\ &Function.identity/1),
     do:
       Util.lines(string)
       |> Enum.with_index()
@@ -8,7 +8,7 @@ defmodule Matrix do
           y =>
             String.graphemes(ln)
             |> Enum.with_index()
-            |> Enum.reduce(%{}, fn {c, x}, acc -> Map.merge(acc, %{x => c}) end)
+            |> Enum.reduce(%{}, fn {c, x}, acc -> Map.merge(acc, %{x => mapper.(c)}) end)
         }
         |> Map.merge(acc)
       end)
@@ -69,4 +69,12 @@ defmodule Matrix do
   def next_south({y, x}), do: {y + 1, x}
   def next_west({y, x}), do: {y, x - 1}
   def next_north({y, x}), do: {y - 1, x}
+
+  def neighbours(loc),
+    do: [
+      next_north(loc),
+      next_east(loc),
+      next_south(loc),
+      next_west(loc)
+    ]
 end
