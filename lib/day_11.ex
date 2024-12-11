@@ -33,7 +33,7 @@ defmodule Day11 do
   end
 
   def part1(input) do
-    solve(input, 25) |> IO.inspect(label: "p2")
+    solve(input, 25) |> IO.inspect(label: "p1")
   end
 
   def part2(input) do
