@@ -55,4 +55,15 @@ defmodule Adventofcode2024Test do
     assert Day11.part1(Day11Input.input()) == 185_894
     assert Day11.part2(Day11Input.input()) == 221_632_504_974_231
   end
+
+  test "day12" do
+    assert Day12.part1(Day12Input.input()) == 1_471_452
+    assert Day12.part2(Day12Input.input_example()) >= 0
+  end
+
+  test "day13" do
+    assert Day13.part1(Day13Input.input()) == 33209
+    assert Day13.part2(Day13Input.input_example()) >= 0
+    # assert Day13.part2(Day12Input.input_example()) >= 0
+  end
 end
